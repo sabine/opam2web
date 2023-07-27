@@ -1,0 +1,82 @@
+:80 {
+    file_server browse
+    root * /usr/share/caddy
+
+    # looking at https://github.com/ocaml/opam/blob/445b377693341369c75be435bdb50e3d991a0d49/src/format/opamPackage.ml#L70
+    # I identified these regular expressions:
+    # package name ([a-zA-Z0-9_\-\+]+)
+    # package version ([a-zA-Z0-9_\-\+~\.]+)
+
+    # FIXME: all the redirects are by default status 302 (temporary).
+    # After it is confirmed that everything is working fine on the live site,
+    # we need to change to 301 (permanent) redirects.
+
+    redir / https://ocaml.org/doc/platform/opam
+    redir /packages https://ocaml.org/packages
+
+    # redirect packages
+
+    @package path_regexp package ^/packages/([a-zA-Z0-9_\-\+]+)/?$
+    redir @package https://ocaml.org/p/{re.package.1}/latest
+
+    @package_version path_regexp package_version ^/packages/([a-zA-Z0-9_\-\+]+)/([a-zA-Z0-9_\-\+]+)\.([a-zA-Z0-9_\-\+~\.]+)/?$
+    redir @package_version https://ocaml.org/p/{re.package_version.1}/{re.package_version.3}
+
+    # redirect Opam documentation
+
+    redir /doc/ https://ocaml.org/docs/platform/opam
+
+    @opam_documentation_page path_regexp opam_documentation_page ^/doc/([\w\.]+)/?$
+    redir @opam_documentation_page https://ocaml.org/docs/platform/opam/latest/{re.opam_documentation_page.1}
+
+    redir /about.html https://ocaml.org/docs/platform/opam/latest/About.html
+
+    # redirect Opam blog entries to changelog entries on ocaml.org
+
+    redir /blog/opam-2-2-0-alpha2/ https://ocaml.org/changelog/2023-07-26-opam-2-2-0-alpha2
+    redir /blog/opam-2-2-0-alpha/ https://ocaml.org/changelog/2023-07-04-opam-2-2-0-alpha
+    redir /blog/opam-2-1-5/ https://ocaml.org/changelog/2023-05-31-opam-2-1-5
+    redir /blog/opam-2-1-4-publish-file-format/ https://ocaml.org/changelog/2022-12-15-opam-2-1-4
+    redir /blog/opam-2-1-3/ https://ocaml.org/changelog/2022-08-12-opam-2-1-3
+    redir /blog/opam-2-1-2/ https://ocaml.org/changelog/2021-12-08-opam-2-1-2
+    redir /blog/opam-2-0-10-2-1-1-depext/ https://ocaml.org/changelog/2021-11-15-opam-2-0-10
+    redir /blog/opam-2-1-0/ https://ocaml.org/changelog/2021-08-04-opam-2-1-0
+    redir /blog/opam-2-0-9/ https://ocaml.org/changelog/2021-08-03-opam-2-0-9
+    redir /blog/opam-2-1-0-rc2/ https://ocaml.org/changelog/2021-06-23-opam-2-1-0-rc2
+    redir /blog/opam-2-1-0-beta4/ https://ocaml.org/changelog/2021-02-08-opam-2-1-0-beta4
+    redir /blog/opam-2-0-8/ https://ocaml.org/changelog/2021-02-08-opam-2-0-8
+    redir /blog/opam-2-1-0-alpha/ https://ocaml.org/changelog/2020-04-21-opam-2-1-0-alpha
+    redir /blog/opam-2-0-7/ https://ocaml.org/changelog/2020-04-21-opam-2-0-7
+    redir /blog/opam-2-0-6/ https://ocaml.org/changelog/2020-01-16-opam-2-0-6
+    redir /blog/opam-2-0-5/ https://ocaml.org/changelog/2019-07-11-opam-2-0-5
+    redir /blog/opam-2-0-4/ https://ocaml.org/changelog/2019-04-10-opam-2-0-4
+    redir /blog/opam-2-0-3/ https://ocaml.org/changelog/2019-01-28-opam-2-0-3
+    redir /blog/opam-2-0-2/ https://ocaml.org/changelog/2018-12-12-opam-2-0-2
+    redir /blog/opam-2-0-1/ https://ocaml.org/changelog/2018-10-24-opam-2-0-1
+    redir /blog/opam-2-0-0/ https://ocaml.org/changelog/2018-09-18-opam-2-0-0
+    redir /blog/opam-2-0-0-rc4/ https://ocaml.org/changelog/2018-07-26-opam-2-0-0-rc4
+    redir /blog/opam-2-0-0-rc3/ https://ocaml.org/changelog/2018-06-22-opam-2-0-0-rc3
+    redir /blog/opam-2-0-0-rc2/ https://ocaml.org/changelog/2018-05-22-opam-2-0-0-rc2
+    redir /blog/opam-2-0-0-rc/ https://ocaml.org/changelog/2018-02-02-opam-2-0-0-rc
+    redir /blog/opam-2-0-beta5/ https://ocaml.org/changelog/2017-11-27-opam-2-0-beta5
+    redir /blog/opam-2-0-beta/ https://ocaml.org/changelog/2017-02-09-opam-2-0-beta
+    redir /blog/deprecating-opam-1-2-0/ https://ocaml.org/changelog/2017-06-14-deprecating-opam-1-2-0
+    redir /blog/opam-lib-1-3/ https://ocaml.org/changelog/2016-11-21-opam-lib-1-3
+    redir /blog/opam-2-0-preview/ https://ocaml.org/changelog/2016-09-20-opam-2-0-preview
+    redir /blog/opam-1-2-2-release/ https://ocaml.org/changelog/2015-05-07-opam-1-2-2-release
+    redir /blog/opam-1-2-1-release/ https://ocaml.org/changelog/2015-03-18-opam-1-2-1-release
+    redir /blog/merlin-2-0-0-released/ https://ocaml.org/changelog/2014-11-03-merlin-2-0-0-released
+    redir /blog/opam-1-2-0-release/ https://ocaml.org/changelog/2014-10-23-opam-1-2-0-release
+    redir /blog/opam-1-2-pin/ https://ocaml.org/changelog/2014-08-19-opam-1-2-pin
+    redir /blog/opam-1-2-0-beta4/ https://ocaml.org/changelog/2014-08-14-opam-1-2-0-beta4
+    redir /blog/opam-1-1-1-released/ https://ocaml.org/changelog/2014-01-29-opam-1-1-1-released
+    redir /blog/opam-1-1-0-released/ https://ocaml.org/changelog/2013-11-08-opam-1-1-0-released
+    redir /blog/opam-1-1-0-release-candidate/ https://ocaml.org/changelog/2013-10-14-opam-1-1-0-release-candidate
+    redir /blog/opam-1-1-0-beta/ https://ocaml.org/changelog/2013-09-20-opam-1-1-0-beta
+    redir /blog/opam-1-0-0-released/ https://ocaml.org/changelog/2013-03-15-opam-1-0-0-released
+
+    # redirect other Opam blog entries to blog entries on ocaml.org
+
+    @blog path_regexp blog ^/blog/(.*)$
+    redir @blog https://ocaml.org/blog/opam/{re.blog.1}
+}
